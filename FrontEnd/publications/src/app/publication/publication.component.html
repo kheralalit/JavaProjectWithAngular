@@ -1,0 +1,161 @@
+<app-header></app-header>
+<div style="main" style="padding:10px">
+    <div class="row">
+        <div class="col-4">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="hasError==true"
+                id="error-alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ error}}
+            </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="hasSuccess==true"
+                id="success-alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ success}}
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="authorName">Publication Title</label>
+                    <input type="text" class="form-control" id="authorName" required
+                        placeholder="Enter Publication Title" [(ngModel)]="publication.title"
+                        [ngModelOptions]="{standalone: true}" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Publication Category</label>
+                    <select placeholder="Category" class="form-control" required name="type"
+                        [(ngModel)]="publication.type" #category (change)='onOptionsSelected(category.value)'>
+                        <option *ngFor="let category of categories" [value]="category.value">
+                            {{category.viewValue}}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="isBook">
+                    <label for="type">Book Genre</label>
+                    <select placeholder="Genre" #genreId (change)='setAttribute(genreId.value)' class="form-control" required name="genre" [(ngModel)]="attribute">
+                        <option *ngFor="let genre of genres" [value]="genre.value">
+                            {{genre.viewValue}}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="isMagazine">
+                    <label for="type">Magazine Type</label>
+                    <select #mag (change)='setAttribute(mag.value)' placeholder="Magazine" class="form-control" required name="type" [(ngModel)]="attribute">
+                        <option *ngFor="let type of types" [value]="type.value">
+                            {{type.viewValue}}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="!isMagazine && !isBook">
+                    <label for="attributes">Comic Hero</label>
+                    <input type="text" class="form-control" id="attributes" required placeholder="Enter Comic Hero"
+                        [(ngModel)]="publication.attributes" [ngModelOptions]="{standalone: true}" required>
+                </div>
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" class="form-control" id="year" required placeholder="Enter Publication Year"
+                        [(ngModel)]="publication.year" [ngModelOptions]="{standalone: true}" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="type">Author</label>
+                    <select placeholder="Author" class="form-control" required name="type" #author
+                        (change)='updateAuthor(author.value)' multiple>
+                        <option *ngFor="let author of authors" [value]="author.id">
+                            {{author.name}}
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" (click)="save()">Save</button>
+                
+            </form>
+
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-4">
+                    <label for="type">Search By</label>
+                    <select placeholder="Search" class="form-control" required name="searchBy" #searchBy
+                        (change)='searchCriteria(searchBy.value)'>
+                        <option [value]="1">Search By Year And Author</option>
+                        <option [value]="2">Random Attribute</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="isOne">
+                <form>
+                    <div class="form-group">
+                        <label for="year">Year</label>
+                        <input type="number" class="form-control" id="year" required placeholder="Enter Publication Year"
+                            [(ngModel)]="year" [ngModelOptions]="{standalone: true}" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Author</label>
+                        <input type="text" class="form-control" id="author" required placeholder="Enter Author"
+                            [(ngModel)]="authorName" [ngModelOptions]="{standalone: true}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" (click)="searchByYearAndAuthor()">Search</button> &nbsp; &nbsp;
+                    <button type="submit" class="btn btn-primary" (click)="loadPublications()">Reload</button>
+                </form>
+            </div>
+            <div class="row" *ngIf="!isOne">
+                    <form>
+                        <div class="form-group">
+                            <label for="year">Attribute</label>
+                            <input type="text" class="form-control" id="year" required placeholder="Enter Attribute"
+                                [(ngModel)]="attribute1" [ngModelOptions]="{standalone: true}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Author</label>
+                            <input type="text" class="form-control" id="author" required placeholder="Enter Author"
+                                [(ngModel)]="authorName" [ngModelOptions]="{standalone: true}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" (click)="searchByAuthorAndAttribute()">Search</button> &nbsp; &nbsp;
+                        <button type="submit" class="btn btn-primary" (click)="loadPublications()">Reload</button>
+                    </form>
+                </div>
+
+            <div class="table-responsive" style="margin-top: 10px">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title&nbsp;&nbsp; <i class="fas fa-fw fa-sort" (click)="sort()"></i>
+                            </th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Year</th>
+                            <th scope="col">Attribute</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let publication of publications; let i=index">
+                            <th scope="row">{{i+1}}</th>
+                            <td>{{publication.title}}</td>
+                            <td>{{publication.type}}</td>
+                            <td>{{publication.year}}</td>
+                            <td>{{publication.attributes}}</td>
+                            <td><label><i class="fas fa-edit icon-enable" aria-hidden="true" (click)="edit(publication)"
+                                        style="cursor: pointer"></i></label>&nbsp;&nbsp;
+                                <label (click)="delete(publication.id)"><i class="fas fa-trash-alt icon-enable"
+                                        aria-hidden="true" style="cursor: pointer"></i></label></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <nav aria-label="Page navigation example" *ngIf="total>size">
+                    <ul class="pagination justify-content-center">
+                        <li [ngClass]="{'page-item':true,'disabled': currentPage==0}">
+                            <a class="page-link" href="#" tabindex="-1" (click)="previous()">Previous</a>
+                        </li>
+                        <li [ngClass]="{'page-item':true,'active': pageNum==currentPage+1}"
+                            *ngFor="let pageNum of pages">
+                            <a class="page-link" href="#" (click)="loadPage(pageNum)">{{pageNum}}</a></li>
+                        <li [ngClass]="{'page-item':true,'disabled':currentPage+1==pages.length}">
+                            <a class="page-link" href="#" (click)="next()">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+{
+    "/author/*": {
+      "target": "http://localhost:8090",
+      "secure": false,
+      "changeOrigin":true,
+      "logLevel": "info"
+    }, 
+    "/publication/*": {
+      "target": "http://localhost:8090",
+      "secure": false,
+      "changeOrigin":true,
+      "logLevel": "info"
+    }
+
+
+  }

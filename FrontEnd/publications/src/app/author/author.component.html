@@ -1,0 +1,66 @@
+<app-header></app-header>
+<div style="main" style="padding:10px">
+    <div class="row">
+        <div class="col-4">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="hasError==true" id="error-alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ error}}
+            </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="hasSuccess==true"
+                id="success-alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ success}}
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="authorName">Author Name</label>
+                    <input type="text" class="form-control" id="authorName" required placeholder="Enter Author name"
+                        [(ngModel)]="author.name" [ngModelOptions]="{standalone: true}" required>
+                </div>
+                <button type="submit" class="btn btn-primary" (click)="save()">Save</button>
+            </form>
+
+        </div>
+        <div class="col-8">
+            <div class="table-responsive" style="margin-top: 10px">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Author Name&nbsp;&nbsp; <i class="fas fa-fw fa-sort"
+                                    (click)="sort()"></i></th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let author of authors; let i=index">
+                            <th scope="row">{{i+1}}</th>
+                            <td>{{author.name}}</td>
+                            <td><label><i class="fas fa-edit icon-enable" aria-hidden="true"
+                                        (click)="edit(author)"  style="cursor: pointer"></i></label>&nbsp;&nbsp;
+                                <label 
+                                    (click)="delete(author.id)"><i class="fas fa-trash-alt icon-enable"
+                                        aria-hidden="true" style="cursor: pointer"></i></label></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <nav aria-label="Page navigation example" *ngIf="total>size">
+                    <ul class="pagination justify-content-center">
+                        <li [ngClass]="{'page-item':true,'disabled': currentPage==0}">
+                            <a class="page-link" href="#" tabindex="-1" (click)="previous()">Previous</a>
+                        </li>
+                        <li [ngClass]="{'page-item':true,'active': pageNum==currentPage+1}"
+                            *ngFor="let pageNum of pages">
+                            <a class="page-link" href="#" (click)="loadPage(pageNum)">{{pageNum}}</a></li>
+                        <li [ngClass]="{'page-item':true,'disabled':currentPage+1==pages.length}">
+                            <a class="page-link" href="#" (click)="next()">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </div>
+</div>
